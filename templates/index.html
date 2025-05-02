@@ -1,15 +1,88 @@
 {% extends "base.html" %}
 {% block content %}
-  {% for genre, shows in shows_by_genre.items() %}
-    <h2>{{ genre }}</h2>
-    {% for show in shows %}
-      <div class="show">
-        <a href="/show/{{ show.id }}">
-          <img src="{{ show.image or '' }}" alt="{{ show.name }}">
-          <p>{{ show.name }}</p>
-        </a>
-      </div>
+<form method="get">
+  <label for="genre">Genre:</label>
+  <select name="genre" id="genre">
+    {% for genre in genres %}
+      <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
     {% endfor %}
-  {% endfor %}
-{% endblock %}
+  </select>
 
+  <label for="sort">Sort by:</label>
+  <select name="sort" id="sort">
+    <option value="name" {% if selected_sort == 'name' %}selected{% endif %}>Name</option>
+    <option value="popularity" {% if selected_sort == 'popularity' %}selected{% endif %}>Popularity</option>
+    <option value="release" {% if selected_sort == 'release' %}selected{% endif %}>Release Date</option>
+    <option value="highest" {% if selected_sort == 'highest' %}selected{% endif %}>Highest Rated</option>
+    <option value="lowest" {% if selected_sort == 'lowest' %}selected{% endif %}>Lowest Rated</option>
+  </select>
+
+  <label for="year">Year:</label>
+  <select name="year" id="year">
+    <option value="">All</option>
+    {% for y in years %}
+      <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="language">Language:</label>
+  <select name="language" id="language">
+    <option value="">All</option>
+    {% for lang in languages %}
+      <option value="{{ lang }}" {% if lang == selected_language %}selected{% endif %}>{{ lang }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="country">Country:</label>
+  <select name="country" id="country">
+    <option value="">All</option>
+    {% for c in countries %}
+      <option value="{{ c }}" {% if c == selected_country %}selected{% endif %}>{{ c }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="runtime">Runtime:</label>
+  <select name="runtime" id="runtime">
+    <option value="">All</option>
+    <option value="short" {% if selected_runtime == 'short' %}selected{% endif %}>≤ 30 min</option>
+    <option value="medium" {% if selected_runtime == 'medium' %}selected{% endif %}>31–60 min</option>
+    <option value="long" {% if selected_runtime == 'long' %}selected{% endif %}>Over 60 min</option>
+  </select>
+
+  <label for="network">Network:</label>
+  <select name="network" id="network">
+    <option value="">All</option>
+    {% for net in networks %}
+      <option value="{{ net }}" {% if net == selected_network %}selected{% endif %}>{{ net }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Filter</button>
+</form>
+
+<hr>
+
+<h2>Shows</h2>
+{% for show in shows %}
+  <div class="show">
+    <a href="/show/{{ show.id }}">
+      <img src="{{ show.image or '' }}" alt="{{ show.name }}">
+      <p>{{ show.name }}</p>
+    </a>
+  </div>
+{% endfor %}
+
+{% if total_pages > 1 %}
+  <footer style="margin-top: 40px; text-align: center;">
+    <div>
+      {% for p in range(1, total_pages + 1) %}
+        {% set active = (p == current_page) %}
+        <a href="?genre={{ selected_genre }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ p }}"
+           class="pagination-button {% if active %}pagination-active{% else %}pagination-inactive{% endif %}">
+          {{ p }}
+        </a>
+      {% endfor %}
+    </div>
+  </footer>
+{% endif %}
+{% endblock %}
