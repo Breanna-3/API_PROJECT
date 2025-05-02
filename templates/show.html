@@ -3,7 +3,14 @@
   <h1>{{ show.name }}</h1>
   <img src="{{ show.image or '' }}" alt="{{ show.name }}" style="max-width: 400px;">
   <p><strong>Genres:</strong> {{ show.genres }}</p>
+  <p><strong>Rating:</strong> {{ show.rating or 'N/A' }}</p>
+  <p><strong>Premiered:</strong> {{ show.premiered or 'Unknown' }}</p>
+  <p><strong>Language:</strong> {{ show.language or 'N/A' }}</p>
+  <p><strong>Country:</strong> {{ show.country or 'N/A' }}</p>
+  <p><strong>Runtime:</strong> {{ show.runtime or 'N/A' }} minutes</p>
+  <p><strong>Network:</strong> {{ show.network or 'N/A' }}</p>
   <p><strong>Summary:</strong> {{ show.summary | safe }}</p>
   <a href="/">← Back to Home</a>
 {% endblock %}
+
 
