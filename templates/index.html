@@ -1,1 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  {% for genre, shows in shows_by_genre.items() %}
+    <h2>{{ genre }}</h2>
+    {% for show in shows %}
+      <div class="show">
+        <a href="/show/{{ show.id }}">
+          <img src="{{ show.image or '' }}" alt="{{ show.name }}">
+          <p>{{ show.name }}</p>
+        </a>
+      </div>
+    {% endfor %}
+  {% endfor %}
+{% endblock %}
 
