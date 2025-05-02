@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
+
+<h1><a href="/" style="color: #66fcf1; text-decoration: none;">🎬 DPR</a></h1>
+
 <form method="get">
   <label for="genre">Genre:</label>
   <select name="genre" id="genre">
+    <option value="">All</option>
     {% for genre in genres %}
       <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="showType">Show Type:</label>
+  <select name="showType" id="showType">
+    <option value="">All</option>
+    {% for t in show_types %}
+      <option value="{{ t }}" {% if t == selected_show_type %}selected{% endif %}>{{ t }}</option>
     {% endfor %}
   </select>
 
@@ -73,16 +85,37 @@
 {% endfor %}
 
 {% if total_pages > 1 %}
-  <footer style="margin-top: 40px; text-align: center;">
-    <div>
-      {% for p in range(1, total_pages + 1) %}
-        {% set active = (p == current_page) %}
-        <a href="?genre={{ selected_genre }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ p }}"
-           class="pagination-button {% if active %}pagination-active{% else %}pagination-inactive{% endif %}">
-          {{ p }}
-        </a>
-      {% endfor %}
-    </div>
-  </footer>
+<footer style="margin-top: 40px; text-align: center;">
+  <div>
+    {% set start = current_page - 3 if current_page > 3 else 1 %}
+    {% set end = current_page + 3 if current_page + 3 < total_pages else total_pages %}
+
+    {% if current_page > 1 %}
+      <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page=1" class="pagination-button">« First</a>
+      <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ current_page - 1 }}" class="pagination-button">‹ Prev</a>
+    {% endif %}
+
+    {% if start > 1 %}
+      <span class="pagination-button">...</span>
+    {% endif %}
+
+    {% for p in range(start, end + 1) %}
+      <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ p }}"
+         class="pagination-button {% if p == current_page %}pagination-active{% else %}pagination-inactive{% endif %}">
+        {{ p }}
+      </a>
+    {% endfor %}
+
+    {% if end < total_pages %}
+      <span class="pagination-button">...</span>
+    {% endif %}
+
+    {% if current_page < total_pages %}
+      <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ current_page + 1 }}" class="pagination-button">Next ›</a>
+      <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ total_pages }}" class="pagination-button">Last »</a>
+    {% endif %}
+  </div>
+</footer>
 {% endif %}
+
 {% endblock %}
