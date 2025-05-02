@@ -1,1 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>{{ show.name }}</h1>
+  <img src="{{ show.image or '' }}" alt="{{ show.name }}" style="max-width: 400px;">
+  <p><strong>Genres:</strong> {{ show.genres }}</p>
+  <p><strong>Summary:</strong> {{ show.summary | safe }}</p>
+  <a href="/">← Back to Home</a>
+{% endblock %}
 
