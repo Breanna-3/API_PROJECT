@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TV Show Browser</title>
+  <title>DPR</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,6 +14,13 @@
     h1, h2 {
       color: #66fcf1;
       text-shadow: 0 0 5px #66fcf1;
+    }
+    a {
+      color: #66fcf1;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
     .show {
       display: inline-block;
@@ -56,16 +63,12 @@
       background-color: #8e44ad;
       box-shadow: 0 0 15px #9b59b6;
     }
-    a {
-      color: #66fcf1;
-      text-decoration: none;
-    }
     hr {
       border: 1px solid #45a29e;
       margin-bottom: 20px;
     }
 
-    /* Pagination classes */
+    /* Pagination button styles */
     .pagination-button {
       display: inline-block;
       margin: 5px;
@@ -82,6 +85,13 @@
     .pagination-inactive {
       color: #9b59b6;
     }
+
+    /* Title styling */
+    h1 a {
+      font-size: 32px;
+      font-weight: 600;
+      text-shadow: 0 0 10px #66fcf1;
+    }
   </style>
 </head>
 <body>
@@ -93,5 +103,3 @@
   {% block content %}{% endblock %}
 </body>
 </html>
-
-
