@@ -17,13 +17,21 @@ tv_db = DB("data")
 
 @app.route('/')
 def index():
-    all_genres = [
-        'All', 'Trending', 'Comedy', 'Drama', 'Action', 'Science-Fiction',
-        'Reality', 'Fantasy', 'Romance', 'Thriller', 'Horror', 'Documentary', 'Animation'
-    ]
+    all_genres = sorted([
+        row['genre_tag'] for _, row in tv_db.query(
+            "SELECT DISTINCT genre_tag FROM shows WHERE genre_tag IS NOT NULL"
+        ).iterrows() if row['genre_tag'] != 'Unknown'
+    ])
 
-    # Get all filters from URL
-    genre_filter = request.args.get('genre', 'All')
+    all_show_types = sorted([
+        row['showType'] for _, row in tv_db.query(
+            "SELECT DISTINCT showType FROM shows WHERE showType IS NOT NULL"
+        ).iterrows()
+    ])
+
+    # Get filters
+    genre_filter = request.args.get('genre', '')
+    show_type = request.args.get('showType', '')
     sort_by = request.args.get('sort', 'name')
     year = request.args.get('year', '')
     language = request.args.get('language', '')
@@ -34,30 +42,28 @@ def index():
     shows_per_page = 24
     offset = (page - 1) * shows_per_page
 
-    # Sorting logic
     sort_column = {
-        'name': 'name',
-        'popularity': 'rating',
-        'release': 'premiered',
+        'name': 'name COLLATE NOCASE ASC',
+        'popularity': 'rating DESC',
+        'release': 'premiered DESC',
         'highest': 'rating DESC',
         'lowest': 'rating ASC'
-    }.get(sort_by, 'name')
+    }.get(sort_by, 'name COLLATE NOCASE ASC')
 
-    # Base SQL queries
     query = "SELECT * FROM shows WHERE 1=1"
     count_query = "SELECT COUNT(*) as count FROM shows WHERE 1=1"
     params = {}
     count_params = {}
 
-    # Apply filters
-    if genre_filter != 'All':
-        if genre_filter == 'Trending':
-            query += " AND rating IS NOT NULL"
-            count_query += " AND rating IS NOT NULL"
-        else:
-            query += " AND genre_tag = :g"
-            count_query += " AND genre_tag = :g"
-            params["g"] = count_params["g"] = genre_filter
+    if genre_filter:
+        query += " AND genre_tag = :g"
+        count_query += " AND genre_tag = :g"
+        params["g"] = count_params["g"] = genre_filter
+
+    if show_type:
+        query += " AND showType = :s"
+        count_query += " AND showType = :s"
+        params["s"] = count_params["s"] = show_type
 
     if year:
         query += " AND premiered LIKE :y"
@@ -90,10 +96,8 @@ def index():
             query += " AND runtime > 60"
             count_query += " AND runtime > 60"
 
-    # Add sorting and limit
     query += f" ORDER BY {sort_column} LIMIT {shows_per_page} OFFSET {offset}"
 
-    # Execute queries
     df = tv_db.query(query, params)
     shows = df.to_dict(orient='records')
 
@@ -101,7 +105,6 @@ def index():
     total_shows = count_df.iloc[0]['count']
     total_pages = (total_shows + shows_per_page - 1) // shows_per_page
 
-    # Load filter dropdown options
     years = [row['year'] for _, row in tv_db.query(
         "SELECT DISTINCT substr(premiered, 1, 4) as year FROM shows WHERE premiered IS NOT NULL ORDER BY year DESC"
     ).iterrows() if row['year']]
@@ -121,7 +124,9 @@ def index():
     return render_template("index.html",
                            shows=shows,
                            genres=all_genres,
+                           show_types=all_show_types,
                            selected_genre=genre_filter,
+                           selected_show_type=show_type,
                            selected_sort=sort_by,
                            selected_year=year,
                            selected_language=language,
@@ -150,7 +155,14 @@ def search():
     if q:
         df = tv_db.query("SELECT * FROM shows WHERE name LIKE :q", {"q": f"%{q}%"})
         results = df.to_dict(orient='records')
-    return render_template("index.html", shows=results, genres=[], selected_genre="", selected_sort="name", selected_year="", selected_language="", selected_country="", selected_runtime="", selected_network="", years=[], languages=[], countries=[], networks=[], current_page=1, total_pages=1)
+    return render_template("index.html", shows=results,
+                           genres=[], show_types=[],
+                           selected_genre="", selected_show_type="",
+                           selected_sort="name", selected_year="",
+                           selected_language="", selected_country="",
+                           selected_runtime="", selected_network="",
+                           years=[], languages=[], countries=[], networks=[],
+                           current_page=1, total_pages=1)
 
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000/")
@@ -158,5 +170,3 @@ def open_browser():
 if __name__ == "__main__":
     threading.Timer(1.0, open_browser).start()
     app.run(debug=True)
-
-
