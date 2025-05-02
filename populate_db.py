@@ -2,44 +2,42 @@ import requests
 import pandas as pd
 from tools import DB
 
-SEARCH_TERMS = [
-    'comedy', 'drama', 'action', 'sci-fi', 'space', 'crime',
-    'fantasy', 'thriller', 'animation', 'anime', 'romance', 'adventure',
-    'superhero', 'reality', 'history', 'horror', 'documentary',
-    'medical', 'teen', 'mystery', 'family', 'travel', 'sports',
-    'korean', 'japanese', 'chinese', 'cantonese', 'french', 'german',
-    'telenovela', 'game show', 'sitcom', 'martial arts', 'variety show',
-    'idol', 'kids', 'cartoon', 'soap opera', 'donghua', 'manhua', 'c-drama'
-]
+NUM_PAGES = 100  # Number of TVmaze pages to fetch (each has ~250 shows)
+
+def determine_genre_tag(genres):
+    if not genres:
+        return "Unknown"
+    return "Anime" if "anime" in [g.lower() for g in genres] else genres[0]
 
 db = DB("data")
 all_shows = {}
 
-for term in SEARCH_TERMS:
-    print(f"Fetching: {term}")
-    response = requests.get(f"https://api.tvmaze.com/search/shows?q={term}")
-    if response.status_code == 200:
-        for item in response.json():
-            show = item['show']
-            show_id = show['id']
-            if show_id not in all_shows:
-                all_shows[show_id] = {
-                    'id': show_id,
-                    'name': show.get('name'),
-                    'summary': show.get('summary'),
-                    'image': show['image']['medium'] if show.get('image') else None,
-                    'genres': ','.join(show.get('genres', [])),
-                    'genre_tag': show.get('genres')[0] if show.get('genres') else 'Unknown',
-                    'rating': show['rating']['average'] if show.get('rating') else None,
-                    'premiered': show.get('premiered'),
-                    'language': show.get('language'),
-                    'runtime': show.get('runtime'),
-                    'country': show['network']['country']['name'] if show.get('network') and show['network'].get('country') else None,
-                    'network': show['network']['name'] if show.get('network') else None
-                }
+for page in range(NUM_PAGES):
+    print(f"Fetching page {page} of popular shows...")
+    response = requests.get(f"https://api.tvmaze.com/shows?page={page}")
+    if response.status_code != 200:
+        break
+    for show in response.json():
+        show_id = show['id']
+        if show_id in all_shows:
+            continue
+        genres = show.get('genres', [])
+        all_shows[show_id] = {
+            'id': show_id,
+            'name': show.get('name'),
+            'summary': show.get('summary'),
+            'image': show['image']['medium'] if show.get('image') else None,
+            'genres': ','.join(genres),
+            'genre_tag': determine_genre_tag(genres),
+            'showType': show.get('type', 'Unknown'),
+            'rating': show['rating']['average'] if show.get('rating') else None,
+            'premiered': show.get('premiered'),
+            'language': show.get('language'),
+            'runtime': show.get('runtime'),
+            'country': show['network']['country']['name'] if show.get('network') and show['network'].get('country') else None,
+            'network': show['network']['name'] if show.get('network') else None
+        }
 
 df = pd.DataFrame(list(all_shows.values()))
 db.load_from_dataframe(df, "shows")
-print(f"✅ Loaded {len(df)} unique shows into the database.")
-
-
+print(f"✅ Loaded {len(df)} shows from TVmaze with showType.")
