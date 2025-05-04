@@ -14,3 +14,10 @@ python app.py
 
 
 *optional
+
+
+
+if issue with numpy reinstall with:
+
+python3.12 -m pip install --force-reinstall numpy
+
