@@ -32,14 +32,14 @@ def index():
     # Get filters
     genre_filter = request.args.get('genre', '')
     show_type = request.args.get('showType', '')
-    sort_by = request.args.get('sort', 'popularity')
+    sort_by = request.args.get('sort', 'name')
     year = request.args.get('year', '')
     language = request.args.get('language', '')
     country = request.args.get('country', '')
     runtime = request.args.get('runtime', '')
     network = request.args.get('network', '')
     page = int(request.args.get('page', 1))
-    shows_per_page = 56
+    shows_per_page = 24
     offset = (page - 1) * shows_per_page
 
     sort_column = {
@@ -120,7 +120,7 @@ def index():
     networks = [row['network'] for _, row in tv_db.query(
         "SELECT DISTINCT network FROM shows WHERE network IS NOT NULL ORDER BY network"
     ).iterrows()]
-#assign filters to correct sql indexs and columns
+
     return render_template("index.html",
                            shows=shows,
                            genres=all_genres,
@@ -164,9 +164,35 @@ def search():
                            years=[], languages=[], countries=[], networks=[],
                            current_page=1, total_pages=1)
 
+
+
+@app.route('/creators')
+@app.route('/creators')
+def creators():
+    creators = [
+        {
+            "name": "Ammal",
+            "bio": "Frontend designer and UX lover. Makes things pretty and usable.",
+            "image": "/static/images/person1.jpg"
+        },
+        {
+            "name": "Breanna",
+            "bio": "Backend architect with a passion for clean APIs and strong data.",
+            "image": "/static/images/person2.jpg"
+        },
+        {
+            "name": "Chloe Zhang",
+            "bio": "Code wrangler and database whisperer. Also does cats and coffee.",
+            "image": "/static/images/person3.jpg"
+        }
+    ]
+    return render_template("creators.html", creators=creators)
+
+    return render_template("creators.html", creators=creators)
+
+
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000/")
-    #local port for site to be hosted on
 
 if __name__ == "__main__":
     threading.Timer(1.0, open_browser).start()
