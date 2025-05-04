@@ -4,10 +4,7 @@ from tools import DB
 
 NUM_PAGES = 100  # Number of TVmaze pages to fetch (each has ~250 shows- rougly 25000 shows generated)
 
-def determine_genre_tag(genres):
-    if not genres:
-        return "Unknown"
-    return "Anime" if "anime" in [g.lower() for g in genres] else genres[0]
+
 
 db = DB("data")
 all_shows = {}
