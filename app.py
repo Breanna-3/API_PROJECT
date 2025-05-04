@@ -120,7 +120,7 @@ def index():
     networks = [row['network'] for _, row in tv_db.query(
         "SELECT DISTINCT network FROM shows WHERE network IS NOT NULL ORDER BY network"
     ).iterrows()]
-
+#assign filters to correct sql indexs and columns
     return render_template("index.html",
                            shows=shows,
                            genres=all_genres,
@@ -166,6 +166,7 @@ def search():
 
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000/")
+    #local port for site to be hosted on
 
 if __name__ == "__main__":
     threading.Timer(1.0, open_browser).start()
