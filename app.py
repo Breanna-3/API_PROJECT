@@ -32,14 +32,14 @@ def index():
     # Get filters
     genre_filter = request.args.get('genre', '')
     show_type = request.args.get('showType', '')
-    sort_by = request.args.get('sort', 'name')
+    sort_by = request.args.get('sort', 'popularity')
     year = request.args.get('year', '')
     language = request.args.get('language', '')
     country = request.args.get('country', '')
     runtime = request.args.get('runtime', '')
     network = request.args.get('network', '')
     page = int(request.args.get('page', 1))
-    shows_per_page = 24
+    shows_per_page = 56
     offset = (page - 1) * shows_per_page
 
     sort_column = {
