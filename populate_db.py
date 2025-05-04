@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from tools import DB
 
-NUM_PAGES = 100  # Number of TVmaze pages to fetch (each has ~250 shows)
+NUM_PAGES = 100  # Number of TVmaze pages to fetch (each has ~250 shows- rougly 25000 shows generated)
 
 def determine_genre_tag(genres):
     if not genres:
