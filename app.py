@@ -32,7 +32,7 @@ def index():
     # Get filters
     genre_filter = request.args.get('genre', '')
     show_type = request.args.get('showType', '')
-    sort_by = request.args.get('sort', 'name')
+    sort_by = request.args.get('sort', 'popularity')
     year = request.args.get('year', '')
     language = request.args.get('language', '')
     country = request.args.get('country', '')
