@@ -17,7 +17,7 @@ python app.py
 
 
 
-if issue with numpy reinstall with:
+if issue with running then numpy reinstall with:
 
 python3.12 -m pip install --force-reinstall numpy
 
