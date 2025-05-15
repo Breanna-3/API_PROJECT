@@ -39,7 +39,7 @@ def index():
     runtime = request.args.get('runtime', '')
     network = request.args.get('network', '')
     page = int(request.args.get('page', 1))
-    shows_per_page = 24
+    shows_per_page = 60
     offset = (page - 1) * shows_per_page
 
     sort_column = {
