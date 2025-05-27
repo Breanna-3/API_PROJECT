@@ -116,6 +116,7 @@ def index():
     total_shows = count_df.iloc[0]['count']
     total_pages = (total_shows + shows_per_page - 1) // shows_per_page
 
+    # Fetch values for filter dropdowns
     years = [row['year'] for _, row in tv_db.query(
         "SELECT DISTINCT substr(premiered, 1, 4) as year FROM shows WHERE premiered IS NOT NULL ORDER BY year DESC"
     ).iterrows() if row['year']]
@@ -132,6 +133,7 @@ def index():
         "SELECT DISTINCT network FROM shows WHERE network IS NOT NULL ORDER BY network"
     ).iterrows()]
 
+    # Render the homepage with filtered shows and filter options
     return render_template("index.html",
                            shows=shows,
                            genres=all_genres,
@@ -153,6 +155,7 @@ def index():
 
 @app.route('/show/<int:show_id>')
 def show_detail(show_id):
+    # Display information for a single show
     df = tv_db.query("SELECT * FROM shows WHERE id = :id", {"id": show_id})
     if df.empty:
         return "Show not found", 404
@@ -161,11 +164,14 @@ def show_detail(show_id):
 
 @app.route('/search')
 def search():
+    # Search shows by name
     q = request.args.get('q', '')
     results = []
     if q:
         df = tv_db.query("SELECT * FROM shows WHERE name LIKE :q", {"q": f"%{q}%"})
         results = df.to_dict(orient='records')
+
+    # Show search results using the same index template
     return render_template("index.html", shows=results,
                            genres=[], show_types=[],
                            selected_genre="", selected_show_type="",
@@ -180,6 +186,7 @@ def search():
 @app.route('/creators')
 @app.route('/creators')
 def creators():
+    # static page showing creators' info
     creators = [
         {
             "name": "Ammal",
@@ -207,6 +214,6 @@ def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000/")
 
 if __name__ == "__main__":
-    # Start the app and open browser
+    # Run the app and open browser after a second
     threading.Timer(1.0, open_browser).start()
     app.run(debug=True)
