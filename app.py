@@ -7,16 +7,20 @@ import threading
 import webbrowser
 
 app = Flask(__name__)
+# Configure the SQLite database path
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.getcwd(), 'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Initialise database and migration tools
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Use the custom DB class to access the SQLite database
 tv_db = DB("data")
 
 @app.route('/')
 def index():
+    # Fetch all unique genares and show types for filtering
     all_genres = sorted([
         row['genre_tag'] for _, row in tv_db.query(
             "SELECT DISTINCT genre_tag FROM shows WHERE genre_tag IS NOT NULL"
@@ -42,6 +46,7 @@ def index():
     shows_per_page = 60
     offset = (page - 1) * shows_per_page
 
+    # Choose sorting column based on user choice
     sort_column = {
         'name': 'name COLLATE NOCASE ASC',
         'popularity': 'rating DESC',
@@ -50,11 +55,14 @@ def index():
         'lowest': 'rating ASC'
     }.get(sort_by, 'name COLLATE NOCASE ASC')
 
+    # Build SQL query and count query based on filters
     query = "SELECT * FROM shows WHERE 1=1"
     count_query = "SELECT COUNT(*) as count FROM shows WHERE 1=1"
     params = {}
     count_params = {}
 
+    
+    # Add filtering conditions
     if genre_filter:
         query += " AND genre_tag = :g"
         count_query += " AND genre_tag = :g"
@@ -96,11 +104,14 @@ def index():
             query += " AND runtime > 60"
             count_query += " AND runtime > 60"
 
+    # Finalise query with sorting and pagination
     query += f" ORDER BY {sort_column} LIMIT {shows_per_page} OFFSET {offset}"
 
+    # Run the final query to get shows
     df = tv_db.query(query, params)
     shows = df.to_dict(orient='records')
 
+    # Get the total number of matching shows for pagination
     count_df = tv_db.query(count_query, count_params)
     total_shows = count_df.iloc[0]['count']
     total_pages = (total_shows + shows_per_page - 1) // shows_per_page
@@ -181,8 +192,8 @@ def creators():
             "image": "/static/images/person2.jpg"
         },
         {
-            "name": "Chloe Zhang",
-            "bio": "Code wrangler and database whisperer. Also does cats and coffee.",
+            "name": "Andjela Rodic",
+            "bio": "Full stack developer who loves clean code.",
             "image": "/static/images/person3.jpg"
         }
     ]
@@ -192,8 +203,10 @@ def creators():
 
 
 def open_browser():
+    # Open the web browser automatically
     webbrowser.open_new("http://127.0.0.1:5000/")
 
 if __name__ == "__main__":
+    # Start the app and open browser
     threading.Timer(1.0, open_browser).start()
     app.run(debug=True)
