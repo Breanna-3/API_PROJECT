@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- Page title -->
 <h1><a href="/" style="color: #2d5fdd; text-decoration: none;">🎬 DPR</a></h1>
+
+<!-- Search form-->
  <form action="/search" method="get" style="margin-bottom: 20px;">
     <input type="text" name="q" placeholder="Search shows..." />
     <button type="submit">Search</button>
   </form>
-  
+
+  <!--Button to toggle filter sidebar -->
     <button onclick="document.getElementById('filterSidebar').classList.toggle('open')" 
             style="position: fixed; top: 20px; left: 20px; z-index: 1000;">🔍 Filters</button>
 
+   <!-- Filter sidebar -->
     <div id="filterSidebar" class="sidebar">
       <form action="/" method="get" style="display: flex; flex-direction: column;">
         {{ filter_form|safe }}
+
+    <!-- Manual filter form -->   
     <form method="get">
   <label for="genre">Genre:</label>
   <select name="genre" id="genre">
@@ -84,6 +91,7 @@
 
 <hr>
 
+<!-- Show list -->
 <h2>Shows</h2>
 {% for show in shows %}
   <div class="show">
@@ -94,6 +102,7 @@
   </div>
 {% endfor %}
 
+<!-- Pagination -->
 {% if total_pages > 1 %}
 <footer style="margin-top: 40px; text-align: center;">
   <div>
@@ -101,6 +110,7 @@
     {% set end = current_page + 3 if current_page + 3 < total_pages else total_pages %}
 
     {% if current_page > 1 %}
+      <!-- First and previous page numbers -->
       <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page=1" class="pagination-button">« First</a>
       <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ current_page - 1 }}" class="pagination-button">‹ Prev</a>
     {% endif %}
@@ -110,6 +120,7 @@
     {% endif %}
 
     {% for p in range(start, end + 1) %}
+      <!-- Numbered page numbers -->
       <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ p }}"
          class="pagination-button {% if p == current_page %}pagination-active{% else %}pagination-inactive{% endif %}">
         {{ p }}
@@ -121,6 +132,7 @@
     {% endif %}
 
     {% if current_page < total_pages %}
+      <!-- Next and last page buttons -->
       <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ current_page + 1 }}" class="pagination-button">Next ›</a>
       <a href="?genre={{ selected_genre }}&showType={{ selected_show_type }}&sort={{ selected_sort }}&year={{ selected_year }}&language={{ selected_language }}&country={{ selected_country }}&runtime={{ selected_runtime }}&network={{ selected_network }}&page={{ total_pages }}" class="pagination-button">Last »</a>
     {% endif %}
