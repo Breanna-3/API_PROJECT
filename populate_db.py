@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 from tools import DB
 
-# Cell 2: Constants and helper functions
 NUM_PAGES = 100  # Number of TVmaze pages to fetch (each has ~250 shows)
 
 def determine_genre_tag(genres):
@@ -10,12 +9,12 @@ def determine_genre_tag(genres):
     if not genres:
         return "Unknown"
     return "Anime" if "anime" in [g.lower() for g in genres] else genres[0]
-    
-# Cell 3: DB helper and data structure
+
+# DB helper
 db = DB("data")
 all_shows = {}
 
-# Cell 4: Fetch shows from multiple genres
+# Fetch shows from multiple genres
 for page in range(NUM_PAGES):
     print(f"Fetching page {page} of popular shows...")
     response = requests.get(f"https://api.tvmaze.com/shows?page={page}")
@@ -43,7 +42,7 @@ for page in range(NUM_PAGES):
             'network': show['network']['name'] if show.get('network') else None
         }
 
-# Cell 5: Convert to DataFrame and load into the database
+# Covert to DataFrame and load into the database
 df = pd.DataFrame(list(all_shows.values()))
 db.load_from_dataframe(df, "shows")
 print(f"✅ Loaded {len(df)} shows from TVmaze with showType.")
