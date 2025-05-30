@@ -23,8 +23,8 @@ erDiagram
         int BirthYear
     }
     SHOW_ACTORS {
-        int EpisodeID FK %% Foreign key to EPISODES
-        int ActorID FK %% Foreign key to ACTORS
+        int EpisodeID FK 
+        int ActorID FK
     }
 
     %% Relationships
