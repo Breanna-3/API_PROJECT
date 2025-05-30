@@ -34,7 +34,8 @@ for page in range(NUM_PAGES):
             'language': show.get('language'),
             'premiered': show.get('premiered'),
             'runtime': show.get('runtime'),
-            'rating': show['rating']['average'] if show.get('rating') and show['rating']['average'] is not None else None
+            'rating': show['rating']['average'] if show.get('rating') and show['rating']['average'] is not None else None,
+            'image': show['image']['medium'] if show.get('image') and show['image'].get('medium') else None
         }
 
 # Convert to DataFrame and load into the database
