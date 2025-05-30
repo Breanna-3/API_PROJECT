@@ -1,24 +1,24 @@
 erDiagram
     TV_SHOWS {
-        int ShowID PK %% Primary key
+        int ShowID PK
         string Title
         int ReleaseYear 
-        int GenreID FK %% Foreign key to GENRES
+        int GenreID FK
     }
     GENRES {
-        int GenreID PK %% Primary key
+        int GenreID PK
         string GenreName
     }
     EPISODES {
-        int EpisodeID PK %% Primary key
-        int ShowID FK %% Foreign key to TV_SHOWS
+        int EpisodeID PK
+        int ShowID FK
         string Title
         int Season
         int EpisodeNumber
         string AirDate
     }
     ACTORS {
-        int ActorID PK %% Primary key
+        int ActorID PK
         string Name
         int BirthYear
     }
@@ -28,7 +28,7 @@ erDiagram
     }
 
     %% Relationships
-    TV_SHOWS ||--o{ EPISODES : "has" %% One show has many episodes
-    TV_SHOWS }o--|| GENRES : "belongs to" %% Each shows belongs to one genres
+    TV_SHOWS ||--o{ EPISODES : "has" 
+    TV_SHOWS }o--|| GENRES : "belongs to" 
     EPISODES ||--o{ SHOW_ACTORS : "has"
     ACTORS ||--o{ SHOW_ACTORS : "acts in"
