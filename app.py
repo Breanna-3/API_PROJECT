@@ -183,30 +183,7 @@ def search():
 
 
 
-@app.route('/creators')
-@app.route('/creators')
-def creators():
-    # static page showing creators' info
-    creators = [
-        {
-            "name": "Ammal",
-            "bio": "Frontend designer and UX lover. Makes things pretty and usable.",
-            "image": "/static/images/person1.jpg"
-        },
-        {
-            "name": "Breanna",
-            "bio": "Backend architect with a passion for clean APIs and strong data.",
-            "image": "/static/images/person2.jpg"
-        },
-        {
-            "name": "Andjela Rodic",
-            "bio": "Full stack developer who loves clean code.",
-            "image": "/static/images/person3.jpg"
-        }
-    ]
-    return render_template("creators.html", creators=creators)
 
-    return render_template("creators.html", creators=creators)
 
 
 def open_browser():
